@@ -7,3 +7,4 @@
 7. add view
 8. add JavaScript
 9. add Graphics
+10. add Bird Logic
