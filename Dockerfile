@@ -70,4 +70,5 @@ ENV PORT 80
 
 EXPOSE ${PORT}
 
-CMD ["sh", "-c", "bundle exec falcon serve --rackup config.ru --bind tcp://0.0.0.0:${PORT}"]
+CMD ["sh", "-c", "bundle exec falcon serve --bind tcp://0.0.0.0:${PORT}"]
+
