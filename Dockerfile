@@ -70,8 +70,4 @@ ENV PORT 80
 
 EXPOSE ${PORT}
 
-CMD sh -c "bundle exec rails server \
-    -b 0.0.0.0 \
-    -p ${PORT} \
-    --server falcon"
-
+CMD ["sh", "-c", "bundle exec falcon serve --rackup config.ru --bind tcp://0.0.0.0:${PORT}"]
