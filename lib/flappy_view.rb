@@ -60,6 +60,76 @@ class FlappyView < Live::View
     end
   end
 
+  class Pipe < BoundingBox
+    def initialize(x, y, offset = 100, width: 44, height: 700)
+      @x = x
+      @y = y
+      @offset = offset
+
+      @width = width
+      @height = height
+    end
+
+    def right
+      @x + @width
+    end
+
+    def top
+      @y + @offset
+    end
+
+    def bottom
+      (@y - @offset) - @height
+    end
+
+    def scaled_random
+      rand(-1.0..1.0) * 0.5
+    end
+
+    # Reset the pipe to the right side of the screen.
+    def reset!
+      @x = WIDTH + (rand * 10)
+      @y = HEIGHT / 2 + (HEIGHT / 2 * scaled_random)
+    end
+
+    # Move the pipe to the left by a fixed amount.
+    def step(dt)
+      @x -= 100 * dt
+
+      # Reset the pipe if it goes off the left side of the screen.
+      if self.right < 0
+        reset!
+      end
+    end
+
+    def upper_bounding_box
+      BoundingBox.new(@x, self.bottom, @width, @height)
+    end
+
+    def lower_bounding_box
+      BoundingBox.new(@x, self.top, @width, @height)
+    end
+
+    # Whether a given bounding box intersects with the pipe segments.
+    def intersects?(other)
+      upper_bounding_box.intersects?(other) ||
+      lower_bounding_box.intersects?(other)
+    end
+
+    # Render the pipe segments.
+    def render(builder)
+      size = "width: #{@width}px; height: #{@height}px;"
+
+      builder.inline_tag(:div, class: "pipe",
+        style: "left: #{@x}px; bottom: #{self.bottom}px; #{size}"
+      )
+
+      builder.inline_tag(:div, class: "pipe",
+        style: "left: #{@x}px; top: #{self.top}px; #{size}"
+      )
+    end
+  end
+
   def initialize(...)
     super(...)
     @game = nil
