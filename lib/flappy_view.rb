@@ -202,8 +202,9 @@ class FlappyView < Live::View
   # Handle events from the client.
   def handle(event)
     case event[:type]
-    when "keypress"
-      if event.dig(:detail, :key) == " "
+    when "keypress", "touchstart"
+      detail = event[:detail]
+      if detail[:key] == " " || detail[:touch]
         @bird&.flap
       end
     end
@@ -211,12 +212,12 @@ class FlappyView < Live::View
 
   # Forward keypress events from the client to the server.
   def forward_keypress
-    "live.forwardEvent(#{JSON.dump(@id)}, event, {key: event.key})"
+    "live.forwardEvent(#{JSON.dump(@id)}, event, {key: event.key, touch: (event.type === 'touchstart')});"
   end
 
   # Render the view.
   def render(builder)
-    builder.tag(:div, class: "flappy", tabIndex: 0, onKeyPress: forward_keypress) do
+    builder.tag(:div, class: "flappy", tabIndex: 0, onKeyPress: forward_keypress, onTouchStart: forward_keypress) do
       @bird&.render(builder)
       @pipes&.each do |pipe|
         pipe.render(builder)
