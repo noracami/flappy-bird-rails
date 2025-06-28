@@ -61,13 +61,15 @@ class FlappyView < Live::View
   end
 
   class Pipe < BoundingBox
-    def initialize(x, y, offset = 100, width: 44, height: 700)
+    def initialize(x, y, offset = 100, random: 0, width: 44, height: 700)
       @x = x
       @y = y
       @offset = offset
 
       @width = width
       @height = height
+
+      @random = random
     end
 
     def right
@@ -83,12 +85,12 @@ class FlappyView < Live::View
     end
 
     def scaled_random
-      rand(-1.0..1.0) * 0.5
+      @random.rand(-0.8..0.8) * 0.5
     end
 
     # Reset the pipe to the right side of the screen.
     def reset!
-      @x = WIDTH + (rand * 10)
+      @x = WIDTH + (@random.rand * 10)
       @y = HEIGHT / 2 + (HEIGHT / 2 * scaled_random)
     end
 
@@ -125,7 +127,7 @@ class FlappyView < Live::View
       )
 
       builder.inline_tag(:div, class: "pipe",
-        style: "left: #{@x}px; top: #{self.top}px; #{size}"
+        style: "left: #{@x}px; bottom: #{self.top}px; #{size}"
       )
     end
   end
@@ -134,17 +136,34 @@ class FlappyView < Live::View
     super(...)
     @game = nil
     @bird = nil
+    @pipes = nil
+
+    @random = nil
   end
 
   # Reset the game state.
   def reset!
+    @random ||= Random.new
+
     @bird = Bird.new
+    @pipes = [
+      Pipe.new(WIDTH * 1/2, HEIGHT / 2, random: @random),
+      Pipe.new(WIDTH * 2/2, HEIGHT / 2, random: @random)
+    ]
     @game ||= self.run!
   end
 
   # Update the game state by one time step.
   def step(dt)
     @bird.step(dt)
+
+    @pipes.each do |pipe|
+      pipe.step(dt)
+
+      if pipe.intersects?(@bird)
+        return reset!
+      end
+    end
 
     if @bird.top < 0
       reset!
@@ -197,6 +216,9 @@ class FlappyView < Live::View
   def render(builder)
     builder.tag(:div, class: "flappy", tabIndex: 0, onKeyPress: forward_keypress) do
       @bird&.render(builder)
+      @pipes&.each do |pipe|
+        pipe.render(builder)
+      end
     end
   end
 end

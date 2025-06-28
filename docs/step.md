@@ -10,3 +10,4 @@
 10. add Bird Logic
 11. add Game Logic
 12. add Pipe Logic
+13. update Game Logic
