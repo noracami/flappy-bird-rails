@@ -8,3 +8,35 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.flappy {
+  background-image: url("flappy-background.png");
+  width: 420px;
+  height: 640px;
+  margin: auto;
+
+  position: relative;
+  overflow: hidden;
+
+  .bird {
+    z-index: 1;
+    background-image: url("flappy-bird.webp");
+    position: absolute;
+    background-size: contain;
+  }
+
+  .pipe {
+    z-index: 5;
+    background-image: url("flappy-pipe.png");
+    position: absolute;
+    background-size: contain;
+  }
+}
