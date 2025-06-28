@@ -56,7 +56,9 @@ class FlappyView < Live::View
     end
 
     def render(builder)
-      builder.inline_tag(:div, class: "bird", style: "left: #{@x}px; bottom: #{@y}px; width: #{@width}px; height: #{@height}px;")
+      rotation = (@velocity / 20.0).clamp(-40.0, 40.0)
+      rotate = "rotate(#{rotation}deg)"
+      builder.inline_tag(:div, class: "bird", style: "left: #{@x}px; bottom: #{@y}px; width: #{@width}px; height: #{@height}px; transform: #{rotate};")
     end
   end
 
