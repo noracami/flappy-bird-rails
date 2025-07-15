@@ -62,5 +62,5 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "falcon", "~> 0.51.1"
+gem "falcon", "~> 0.52.0"
 gem "live", "~> 0.17.0"
